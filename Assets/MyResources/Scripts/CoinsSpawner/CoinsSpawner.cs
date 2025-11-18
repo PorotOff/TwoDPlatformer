@@ -62,7 +62,4 @@ public class CoinsSpawner : MonoBehaviour
         _coinsPool.Release(coin);
         Spawn();
     }
-
-    // TO-DO: Реализовать сбор монеток.
-    // TO-DO: Реализовать передвижение врагов, пока что от точки до точки (по заданию).
 }

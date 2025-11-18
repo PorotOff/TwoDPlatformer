@@ -1,9 +1,9 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(GroundChecker))]
+[RequireComponent(typeof(PlayerAnimatorController))]
 public class Player : Entity, ICollectibleVisitor
 {
     [SerializeField] private float _jumpForce = 3f;
@@ -13,18 +13,16 @@ public class Player : Entity, ICollectibleVisitor
 
     private InputSystem _inputSystem;
     private Flipper _flipper;
+    private PlayerAnimatorController _playerAnimatorController;
 
     private bool _canJump = false;
     private int _coins;
-
-    public event Action MovementStarted;
-    public event Action MovementCanceled;
-    public event Action Jumped;
 
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
         _groundChecker = GetComponent<GroundChecker>();
+        _playerAnimatorController = GetComponent<PlayerAnimatorController>();
 
         _inputSystem = new InputSystem();
         _flipper = new Flipper();
@@ -37,7 +35,7 @@ public class Player : Entity, ICollectibleVisitor
         _inputSystem.Game.Jump.performed += Jump;
         _inputSystem.Game.Movement.started += OnMovementStarted;
         _inputSystem.Game.Movement.canceled += OnMovementCanceled;
-        _groundChecker.Grounded += SetJumpAbility;
+        _groundChecker.Grounded += OnGrounded;
     }
 
     private void OnDisable()
@@ -45,7 +43,7 @@ public class Player : Entity, ICollectibleVisitor
         _inputSystem.Game.Jump.performed -= Jump;
         _inputSystem.Game.Movement.started -= OnMovementStarted;
         _inputSystem.Game.Movement.canceled -= OnMovementCanceled;
-        _groundChecker.Grounded -= SetJumpAbility;
+        _groundChecker.Grounded -= OnGrounded;
     }
 
     public override void Move()
@@ -56,28 +54,32 @@ public class Player : Entity, ICollectibleVisitor
         _rigidbody.velocity = velocity;
     }
 
+    public void Visit(Coin coin)
+        => _coins += coin.Value;
+
     private void Jump(InputAction.CallbackContext context)
     {
         if (_canJump)
         {
             _rigidbody.AddForce(transform.up * _jumpForce, ForceMode2D.Impulse);
-            Jumped?.Invoke();
+            _playerAnimatorController.OnJump();
         }
     }
 
-    private void SetJumpAbility(bool canJump)
-        => _canJump = canJump;
+    private void OnGrounded(bool isGrounded)
+    {
+        _canJump = isGrounded;
+        _playerAnimatorController.OnGrounded(isGrounded);
+    }
 
     private void OnMovementStarted(InputAction.CallbackContext context)
     {
         Vector2 input = _inputSystem.Game.Movement.ReadValue<Vector2>();
+
         _flipper.Flip(transform, input);
-        MovementStarted?.Invoke();
+        _playerAnimatorController.OnMovementStarted();
     }
 
     private void OnMovementCanceled(InputAction.CallbackContext context)
-        => MovementCanceled?.Invoke();    
-
-    public void Visit(Coin coin)
-        => _coins += coin.Value;
+        => _playerAnimatorController.OnMovementCanceled();
 }

@@ -9,10 +9,13 @@ public class Enemy : Entity
     private Transform _currentWaypoint;
     private int _currentWaypointIndex = 0;
 
-    private Flipper _flipper = new Flipper();
+    private Flipper _flipper;
 
     private void Awake()
-        => _currentWaypoint = _waypoints[_currentWaypointIndex];
+    {
+        _flipper = new Flipper();
+        _currentWaypoint = _waypoints[_currentWaypointIndex];
+    }
 
     public override void Move()
     {

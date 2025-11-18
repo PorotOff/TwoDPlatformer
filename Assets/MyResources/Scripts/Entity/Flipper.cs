@@ -7,18 +7,18 @@ public class Flipper
 
     public void Flip(Transform currentTransform, Vector3 targetPosition)
     {
-        if (currentTransform.position.x > targetPosition.x)
+        if (currentTransform.position.x < targetPosition.x)
             FlipLeft(currentTransform);
         else
             FlipRight(currentTransform);
     }
 
-    public void Flip(Transform transform, Vector2 input)
+    public void Flip(Transform currentTransform, Vector2 input)
     {
         if (input.x > 0)
-            FlipRight(transform);
+            FlipRight(currentTransform);
         else if (input.x < 0)
-            FlipLeft(transform);
+            FlipLeft(currentTransform);
     }
 
     public void FlipRight(Transform transform)
