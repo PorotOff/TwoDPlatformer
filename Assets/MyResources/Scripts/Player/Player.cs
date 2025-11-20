@@ -3,17 +3,19 @@ using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(GroundChecker))]
-[RequireComponent(typeof(PlayerAnimatorController))]
-public class Player : Entity, ICollectibleVisitor
+[RequireComponent(typeof(PlayerAnimator))]
+public class Player : MonoBehaviour, ICollectibleVisitor
 {
+    [SerializeField] private float _speed;
     [SerializeField] private float _jumpForce = 3f;
 
     private Rigidbody2D _rigidbody;
     private GroundChecker _groundChecker;
+    private PlayerAnimator _playerAnimator;
 
     private InputSystem _inputSystem;
     private Flipper _flipper;
-    private PlayerAnimatorController _playerAnimatorController;
+    private Mover _mover;
 
     private bool _canJump = false;
     private int _coins;
@@ -22,10 +24,11 @@ public class Player : Entity, ICollectibleVisitor
     {
         _rigidbody = GetComponent<Rigidbody2D>();
         _groundChecker = GetComponent<GroundChecker>();
-        _playerAnimatorController = GetComponent<PlayerAnimatorController>();
+        _playerAnimator = GetComponent<PlayerAnimator>();
 
         _inputSystem = new InputSystem();
         _flipper = new Flipper();
+        _mover = new Mover();
 
         _inputSystem.Game.Enable();
     }
@@ -46,12 +49,15 @@ public class Player : Entity, ICollectibleVisitor
         _groundChecker.Grounded -= OnGrounded;
     }
 
-    public override void Move()
+    private void FixedUpdate()
+        => Move();
+
+    public void Move()
     {
         Vector2 input = _inputSystem.Game.Movement.ReadValue<Vector2>();
-        Vector2 velocity = new Vector2(input.x * Speed, _rigidbody.velocity.y);
+        Vector2 velocity = new Vector2(input.x * _speed, _rigidbody.velocity.y);
 
-        _rigidbody.velocity = velocity;
+        _mover.Move(_rigidbody, velocity);
     }
 
     public void Visit(Coin coin)
@@ -62,14 +68,14 @@ public class Player : Entity, ICollectibleVisitor
         if (_canJump)
         {
             _rigidbody.AddForce(transform.up * _jumpForce, ForceMode2D.Impulse);
-            _playerAnimatorController.OnJump();
+            _playerAnimator.OnJump();
         }
     }
 
     private void OnGrounded(bool isGrounded)
     {
         _canJump = isGrounded;
-        _playerAnimatorController.OnGrounded(isGrounded);
+        _playerAnimator.OnGrounded(isGrounded);
     }
 
     private void OnMovementStarted(InputAction.CallbackContext context)
@@ -77,9 +83,9 @@ public class Player : Entity, ICollectibleVisitor
         Vector2 input = _inputSystem.Game.Movement.ReadValue<Vector2>();
 
         _flipper.Flip(transform, input);
-        _playerAnimatorController.OnMovementStarted();
+        _playerAnimator.OnMovementStarted();
     }
 
     private void OnMovementCanceled(InputAction.CallbackContext context)
-        => _playerAnimatorController.OnMovementCanceled();
+        => _playerAnimator.OnMovementCanceled();
 }

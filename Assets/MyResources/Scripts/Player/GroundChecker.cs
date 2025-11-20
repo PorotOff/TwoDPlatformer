@@ -4,6 +4,8 @@ using UnityEngine;
 public class GroundChecker : MonoBehaviour
 {
     private int _groundEntriesCount = 0;
+
+    public bool IsGrounded => _groundEntriesCount > 0;
     
     public event Action<bool> Grounded;
 
