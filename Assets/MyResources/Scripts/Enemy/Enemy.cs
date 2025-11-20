@@ -18,9 +18,21 @@ public class Enemy : MonoBehaviour
         _patroller = new Patroller(_waypoints);
     }
 
+    private void OnEnable()
+        => _mover.WaypointReached += OnWaypointReached;
+
+    private void OnDisable()
+        => _mover.WaypointReached -= OnWaypointReached;
+
     private void Start()
         => _flipper.Flip(transform, _patroller.CurrentWaypointPosition);
 
     private void Update()
         => _mover.Follow(transform, _patroller.CurrentWaypointPosition, _speed);
+
+    private void OnWaypointReached()
+    {
+        _flipper.Flip(transform, _patroller.CurrentWaypointPosition);
+        _patroller.SetNextWaypoint();
+    }
 }

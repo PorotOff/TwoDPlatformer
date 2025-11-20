@@ -4,24 +4,24 @@ public class PlayerAnimator : MonoBehaviour
 {
     [SerializeField] private Animator _animator;
 
-    private readonly int _isIdle = Animator.StringToHash(nameof(_isIdle));
-    private readonly int _isMove = Animator.StringToHash(nameof(_isMove));
-    private readonly int _jumped = Animator.StringToHash(nameof(_jumped));
+    private readonly int IsIdle = Animator.StringToHash(nameof(IsIdle));
+    private readonly int IsMove = Animator.StringToHash(nameof(IsMove));
+    private readonly int Jumped = Animator.StringToHash(nameof(Jumped));
 
     public void OnMovementStarted()
-        => _animator.SetBool(_isIdle, true);
+        => _animator.SetBool(IsMove, true);
 
     public void OnMovementCanceled()
-        => _animator.SetBool(_isMove, false);
+        => _animator.SetBool(IsMove, false);
 
     public void OnJump()
-        => _animator.SetTrigger(_jumped);
+        => _animator.SetTrigger(Jumped);
 
     public void OnGrounded(bool isGrounded)
     {
         if (isGrounded)
-            _animator.SetBool(_isIdle, true);
+            _animator.SetBool(IsIdle, true);
         else
-            _animator.SetBool(_isIdle, false);
+            _animator.SetBool(IsIdle, false);
     }
 }

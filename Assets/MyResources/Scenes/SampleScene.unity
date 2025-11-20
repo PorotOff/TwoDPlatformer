@@ -661,6 +661,10 @@ PrefabInstance:
       value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 2367731665140429881, guid: 4ebcf5776322ff44b93cbdea74051a82, type: 3}
+      propertyPath: _speed
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2367731665140429881, guid: 4ebcf5776322ff44b93cbdea74051a82, type: 3}
       propertyPath: _waypoints.Array.size
       value: 2
       objectReference: {fileID: 0}
@@ -1163,6 +1167,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2367731665140429881, guid: 4ebcf5776322ff44b93cbdea74051a82, type: 3}
       propertyPath: Speed
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2367731665140429881, guid: 4ebcf5776322ff44b93cbdea74051a82, type: 3}
+      propertyPath: _speed
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2367731665140429881, guid: 4ebcf5776322ff44b93cbdea74051a82, type: 3}
@@ -1726,6 +1734,10 @@ PrefabInstance:
     - target: {fileID: 2292962363684266416, guid: 4ebcf5776322ff44b93cbdea74051a82, type: 3}
       propertyPath: m_LocalRotation.z
       value: -0.33370787
+      objectReference: {fileID: 0}
+    - target: {fileID: 2367731665140429881, guid: 4ebcf5776322ff44b93cbdea74051a82, type: 3}
+      propertyPath: _speed
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2367731665140429881, guid: 4ebcf5776322ff44b93cbdea74051a82, type: 3}
       propertyPath: _waypoints.Array.size
@@ -9450,7 +9462,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a43d5d17470893c46ad7579dca188f80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Speed: 6
+  _speed: 6
   _jumpForce: 8
 --- !u!70 &1553218568
 CapsuleCollider2D:
@@ -9554,9 +9566,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35ce146368d58744eaade5509df635fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isIdleParameter: IsIdle
-  _isMoveParameter: IsMove
-  _jumpedParameter: Jumped
   _animator: {fileID: 8835872243018713926}
 --- !u!114 &1553218573
 MonoBehaviour:
