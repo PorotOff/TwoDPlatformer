@@ -1,15 +1,10 @@
-using System;
-using UnityEngine;
-
-public class Coin : MonoBehaviour, ICollectible
+public class Coin : Collectible
 {
     public int Value => 1;
 
-    public event Action<Coin> Collected;
-
-    public void Accept(ICollectibleVisitor visitor)
+    public override void Accept(ICollectibleVisitor visitor)
     {
         visitor.Visit(this);
-        Collected?.Invoke(this);
+        base.Accept(visitor);
     }
 }

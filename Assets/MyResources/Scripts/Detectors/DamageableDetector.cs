@@ -3,11 +3,11 @@ using UnityEngine;
 
 public class DamageableDetector : MonoBehaviour
 {
-    public event Action<IDamageable> Attacked;
+    public event Action<IDamageable> Detected;
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.TryGetComponent(out IDamageable damageable))
-            Attacked?.Invoke(damageable);
+            Detected?.Invoke(damageable);
     }
 }

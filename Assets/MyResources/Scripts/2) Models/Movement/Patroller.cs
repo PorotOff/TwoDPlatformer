@@ -3,13 +3,10 @@ using System.Collections.Generic;
 
 public class Patroller
 {
-    private const float LeftDirection = -1;
-    private const float RighDirection = 1;
-
     private Transform _transform;
     private List<Transform> _waypoints;
     private Transform _currentWaypoint;
-    private int _currentWaypointIndex;
+    private int _currentWaypointIndex;    
     private float _waypointReachRange;
 
     public Patroller(Transform transform, List<Transform> waypoints, float targetReachRange)
@@ -23,14 +20,6 @@ public class Patroller
     }
 
     public Vector3 CurrentWaypointPosition => _currentWaypoint.position;
-
-    public float GetDirectionToWaypoint()
-    {
-        if (_currentWaypoint.position.x < _transform.position.x)
-            return LeftDirection;
-        else
-            return RighDirection;
-    }
     
     public bool IsWaypointReached()
         => Mathf.Abs(_currentWaypoint.position.x - _transform.position.x) <= _waypointReachRange;

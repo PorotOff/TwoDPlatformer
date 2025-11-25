@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(DamageableDetector))]
+[RequireComponent(typeof(AbyssDetector))]
 public class Enemy : MonoBehaviour, IDamageable
 {
     [Header("Movement settings")]
@@ -13,69 +13,58 @@ public class Enemy : MonoBehaviour, IDamageable
     [SerializeField] private Transform _targetPlayer;
     [SerializeField] private float _targetPlayerDetectionRange = 10;
     [SerializeField] private int _damage;
+    
+    private DamageableDetector _damageableDetector;
+    private AbyssDetector _abyssDetector;
 
-    private Rigidbody2D _rigidbody;
-    private DamageableDetector _attacker;
-
-    private Flipper _flipper;
-    private Mover _mover;
+    private Follower _follower;
     private Patroller _patroller;
     private Stalker _stalker;
     private Health _health;
-
-    private float _xMovementDirection;
+    private Flipper _flipper;
 
     private void Awake()
     {
-        _rigidbody = GetComponent<Rigidbody2D>();
-        _attacker = GetComponent<DamageableDetector>();
+        _damageableDetector = GetComponent<DamageableDetector>();
+        _abyssDetector = GetComponent<AbyssDetector>();
 
-        _flipper = new Flipper();
-        _mover = new Mover(_rigidbody, _speed);
+        _follower = new Follower(transform, _speed);
         _patroller = new Patroller(transform, _waypoints, _waypointReachRange);
         _stalker = new Stalker(transform, _targetPlayer, _targetPlayerDetectionRange);
         _health = new Health();
-
-        _xMovementDirection = _patroller.GetDirectionToWaypoint();
+        _flipper = new Flipper();
     }
 
     private void OnEnable()
-        => _attacker.Attacked += Attack;
+    {
+        _health.BecameZero += OnDie;
+        _damageableDetector.Detected += Attack;
+        _abyssDetector.Detected += OnDie;
+    }
 
     private void OnDisable()
-        => _attacker.Attacked -= Attack;
+    {
+        _health.BecameZero -= OnDie;
+        _damageableDetector.Detected -= Attack;
+        _abyssDetector.Detected -= OnDie;
+    }
 
     private void Start()
         => _flipper.Flip(transform, _patroller.CurrentWaypointPosition);
 
-    private void FixedUpdate()
-        => _mover.Move(_xMovementDirection);
-
     private void Update()
     {
-        if (_stalker.IsTargetEnoughClose() == false)
+        if (_stalker.IsTargetEnoughClose())
         {
-            if (_patroller.IsWaypointReached())
-                OnWaypointReached();
+            OnPlayerDetected();               
         }
         else
         {
-            OnPlayerDetected();
+            OnPlayerNotDetected();
+
+            if (_patroller.IsWaypointReached())
+                OnWaypointReached();
         }
-    }
-
-    private void OnWaypointReached()
-    {
-        _patroller.SetNextWaypoint();
-        _flipper.Flip(transform, _patroller.CurrentWaypointPosition);
-
-        _xMovementDirection = _patroller.GetDirectionToWaypoint();
-    }
-
-    private void OnPlayerDetected()
-    {
-        _xMovementDirection = _stalker.GetDirectionToTarget();
-        _flipper.Flip(transform, _patroller.CurrentWaypointPosition);
     }
 
     public void TakeDamage(int damage)
@@ -83,4 +72,22 @@ public class Enemy : MonoBehaviour, IDamageable
 
     public void Attack(IDamageable damageable)
         => damageable.TakeDamage(_damage);
+
+    private void OnWaypointReached()
+        => _patroller.SetNextWaypoint();
+
+    private void OnPlayerNotDetected()
+    {
+        _follower.Follow(_patroller.CurrentWaypointPosition);
+        _flipper.Flip(transform, _patroller.CurrentWaypointPosition);
+    }
+
+    private void OnPlayerDetected()
+    {
+        _follower.Follow(_targetPlayer.position);
+        _flipper.Flip(transform, _targetPlayer.position);
+    }
+
+    private void OnDie()
+        => gameObject.SetActive(false);
 }

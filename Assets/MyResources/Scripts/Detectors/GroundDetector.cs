@@ -7,7 +7,7 @@ public class GroundDetector : MonoBehaviour
 
     public bool IsGrounded => _groundEntriesCount > 0;
     
-    public event Action<bool> Grounded;
+    public event Action<bool> Detected;
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -16,7 +16,7 @@ public class GroundDetector : MonoBehaviour
             _groundEntriesCount++;
 
             if (_groundEntriesCount == 1)
-                Grounded?.Invoke(true);
+                Detected?.Invoke(true);
         }
     }
 
@@ -27,7 +27,7 @@ public class GroundDetector : MonoBehaviour
             _groundEntriesCount--;
 
             if (_groundEntriesCount == 0)
-                Grounded?.Invoke(false);
+                Detected?.Invoke(false);
         }
     }
 }

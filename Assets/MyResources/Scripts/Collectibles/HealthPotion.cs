@@ -1,15 +1,12 @@
-using System;
 using UnityEngine;
 
-public class HealthPotion : MonoBehaviour, ICollectible
+public class HealthPotion : Collectible
 {
     [field: SerializeField] public int HealthAmount { get; private set; }
 
-    public event Action<HealthPotion> Collected;
-
-    public void Accept(ICollectibleVisitor visitor)
+    public override void Accept(ICollectibleVisitor visitor)
     {
         visitor.Visit(this);
-        Collected?.Invoke(this);
+        base.Accept(visitor);
     }
 }

@@ -12,7 +12,7 @@ public class Wallet
         if (amount > 0)
             Coins += amount;
 
-        Debug.Log($"Coins added. Now {Coins}");
+        // Debug.Log($"Coins added. Now {Coins}");
     }
 
     public int GetCoins(int amount)
