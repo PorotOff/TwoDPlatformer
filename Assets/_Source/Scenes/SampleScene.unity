@@ -875,7 +875,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 704317218588135966, guid: 4ebcf5776322ff44b93cbdea74051a82, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1181576807234271476, guid: 4ebcf5776322ff44b93cbdea74051a82, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1541,7 +1541,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 704317218588135966, guid: 4ebcf5776322ff44b93cbdea74051a82, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1181576807234271476, guid: 4ebcf5776322ff44b93cbdea74051a82, type: 3}
       propertyPath: m_LocalRotation.w
@@ -3426,6 +3426,10 @@ PrefabInstance:
       propertyPath: _waypoints.Array.data[1]
       value: 
       objectReference: {fileID: 1430630585}
+    - target: {fileID: 8588285193534789135, guid: 4ebcf5776322ff44b93cbdea74051a82, type: 3}
+      propertyPath: _detectionFrequencySeconds
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8661131166610466096, guid: 4ebcf5776322ff44b93cbdea74051a82, type: 3}
       propertyPath: m_LocalRotation.w
       value: 0.99999547

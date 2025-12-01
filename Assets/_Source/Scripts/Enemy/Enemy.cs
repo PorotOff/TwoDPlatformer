@@ -6,7 +6,6 @@ using UnityEngine;
 [RequireComponent(typeof(CertainFrequencyPlayerDetector))]
 [RequireComponent(typeof(CertainFrequencyAttacker))]
 [RequireComponent(typeof(EnemyAnimator))]
-[RequireComponent(typeof(EnemyAnimationEvents))]
 public class Enemy : MonoBehaviour, IDamageable
 {
     [Header("Movement settings")]
@@ -16,13 +15,14 @@ public class Enemy : MonoBehaviour, IDamageable
     [Header("Attack settings")]
     [SerializeField] private float _attackRadius = 1;
     [SerializeField] private int _damage;
+    [Header("Animations settings")]
+    [SerializeField] private EnemyAnimationEvents _enemyAnimationEvents;
     
     private Rigidbody2D _rigidbody;
     private AbyssDetector _abyssDetector;
     private CertainFrequencyPlayerDetector _playerDetector;
     private CertainFrequencyAttacker _certainFrequencyAttacker;
     private EnemyAnimator _enemyAnimator;
-    private EnemyAnimationEvents _enemyAnimationEvents;
     
     private Patroller _patroller;
     private Chaser _chaser;
@@ -38,7 +38,6 @@ public class Enemy : MonoBehaviour, IDamageable
         _playerDetector = GetComponent<CertainFrequencyPlayerDetector>();
         _certainFrequencyAttacker = GetComponent<CertainFrequencyAttacker>();
         _enemyAnimator = GetComponent<EnemyAnimator>();
-        _enemyAnimationEvents = GetComponent<EnemyAnimationEvents>();
         
         _patroller = new Patroller(_rigidbody, _speed, _waypoints, _waypointReachRange);
         _chaser = new Chaser(_rigidbody, _speed, _attackRadius);
@@ -52,8 +51,7 @@ public class Enemy : MonoBehaviour, IDamageable
         _enemyAnimationEvents.Attacked += OnAnimatorEventsAttacked;
         _damageableDetector.Detected += Attack;
 
-        _health.BecameZero += OnHealthZero;
-        _enemyAnimationEvents.Died += OnAnimatorEventsDied;
+        _health.BecameZero += Die;
         _abyssDetector.Detected += Die;
 
         _playerDetector.PlayerDetected += OnPlayerDetected;
@@ -66,8 +64,7 @@ public class Enemy : MonoBehaviour, IDamageable
         _enemyAnimationEvents.Attacked -= OnAnimatorEventsAttacked;
         _damageableDetector.Detected -= Attack;
 
-        _health.BecameZero -= OnHealthZero;
-        _enemyAnimationEvents.Died -= OnAnimatorEventsDied;
+        _health.BecameZero -= Die;
         _abyssDetector.Detected -= Die;
 
         _playerDetector.PlayerDetected -= OnPlayerDetected;
@@ -82,10 +79,12 @@ public class Enemy : MonoBehaviour, IDamageable
         {
             if (_chaser.IsTargetReached(_player.transform.position))
             {
+                _enemyAnimator.StopMovement();
                 _certainFrequencyAttacker.StartAttack();
             }
             else
             {
+                _enemyAnimator.StartMovement();
                 _certainFrequencyAttacker.StopAttack();
                 _chaser.Chase(_player.transform.position);
             }
@@ -114,26 +113,9 @@ public class Enemy : MonoBehaviour, IDamageable
     private void OnAnimatorEventsAttacked()
         => _damageableDetector.Detect();
 
-    private void OnAnimatorEventsDied()
-        => Die();
-
-    private void OnHealthZero()
-    {
-        _enemyAnimator.Die();
-        _certainFrequencyAttacker.StopAttack();
-    }
-
     private void OnPlayerDetected(Player player)
         => _player = player;
 
     private void OnPlayerNotDetected()
         => _player = null;
-
-
-    void OnDrawGizmos()
-    {
-        Gizmos.DrawWireSphere(transform.position + (transform.right * (_attackRadius / 2)), _attackRadius);
-    }
-    
-    // TO-DO: Реализовать смерть по событию в анимации для врага и игрока (Нужно сделать так, чтобы враг и игрок после старта сметри не реагировали друг на друга).
 }

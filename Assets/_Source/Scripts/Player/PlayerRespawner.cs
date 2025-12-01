@@ -13,6 +13,6 @@ public class PlayerRespawner : MonoBehaviour
     private void OnPlayerDied()
     {
         _player.transform.position = transform.position;
-        _player.Initialize();
+        _player.Reset();
     }
 }

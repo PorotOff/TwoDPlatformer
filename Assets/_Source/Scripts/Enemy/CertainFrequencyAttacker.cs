@@ -22,7 +22,7 @@ public class CertainFrequencyAttacker : MonoBehaviour
 
     public void StopAttack()
     {
-        if (_isAttacking)
+        if (_isAttacking && _coroutine != null)
         {
             StopCoroutine(_coroutine);
             _isAttacking = false;
@@ -33,7 +33,7 @@ public class CertainFrequencyAttacker : MonoBehaviour
     {
         WaitForSecondsRealtime wait = new WaitForSecondsRealtime(_attackCooldownSeconds);
 
-        while (true)
+        while (enabled)
         {
             Attacked?.Invoke();
             yield return wait;

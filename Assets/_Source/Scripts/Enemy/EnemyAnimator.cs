@@ -10,10 +10,16 @@ public class EnemyAnimator : MonoBehaviour
     private readonly int Died = Animator.StringToHash(nameof(Died));
 
     public void StartMovement()
-        => _animator.SetBool(IsMove, true);
+    {
+        if (_animator.GetBool(IsMove) == false)
+            _animator.SetBool(IsMove, true);
+    }
 
     public void StopMovement()
-        => _animator.SetBool(IsMove, false);
+    {
+        if (_animator.GetBool(IsMove))
+            _animator.SetBool(IsMove, false);
+    }
 
     public void Attack()
         => _animator.SetTrigger(Attacked);

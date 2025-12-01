@@ -37,7 +37,7 @@ public class CertainFrequencyPlayerDetector : MonoBehaviour
     {
         WaitForSecondsRealtime wait = new WaitForSecondsRealtime(_detectionFrequencySeconds);
 
-        while (true)
+        while (enabled)
         {
             _playerDetector.Detect();
             yield return wait;

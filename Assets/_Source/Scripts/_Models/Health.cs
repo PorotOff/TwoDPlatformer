@@ -5,12 +5,12 @@ public class Health
 {
     private int _maxHealth = 100;
 
+    public Health()
+        => Reset();
+
     public event Action BecameZero;
 
     public int HealthValue { get; private set; }
-
-    public Health()
-        => HealthValue = _maxHealth;
 
     public void TakeDamage(int damage)
     {
@@ -34,4 +34,7 @@ public class Health
         if (healthAmount > 0)
             HealthValue = Mathf.Min(_maxHealth, HealthValue + healthAmount);
     }
+
+    public void Reset()
+        => HealthValue = _maxHealth;
 }
