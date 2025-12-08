@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CertainFrequencyPlayerDetector : MonoBehaviour
 {
+    [SerializeField] private LayerMask _detectingLayerMask;
     [SerializeField] private float _detectionRadius;
     [SerializeField] private float _detectionFrequencySeconds;
 
@@ -15,7 +16,7 @@ public class CertainFrequencyPlayerDetector : MonoBehaviour
     public event Action PlayerNotDetected;
 
     private void Awake()
-        => _playerDetector = new ComponentDetector<Player>(transform, _detectionRadius);
+        => _playerDetector = new ComponentDetector<Player>(transform, _detectingLayerMask, _detectionRadius);
 
     private void OnEnable()
     {

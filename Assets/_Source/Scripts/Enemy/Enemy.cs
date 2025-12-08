@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(EnemyAnimator))]
 [RequireComponent(typeof(AbyssDetector))]
 [RequireComponent(typeof(CertainFrequencyPlayerDetector))]
 [RequireComponent(typeof(CertainFrequencyAttacker))]
-[RequireComponent(typeof(EnemyAnimator))]
 public class Enemy : MonoBehaviour, IDamageable
 {
     [Header("Movement settings")]
@@ -13,16 +13,18 @@ public class Enemy : MonoBehaviour, IDamageable
     [SerializeField] private float _waypointReachRange = 0.1f;
     [SerializeField] private float _speed;
     [Header("Attack settings")]
+    [SerializeField] private LayerMask _attackLayerMask;
     [SerializeField] private float _attackRadius = 1;
     [SerializeField] private int _damage;
     [Header("Animations settings")]
     [SerializeField] private EnemyAnimationEvents _enemyAnimationEvents;
     
     private Rigidbody2D _rigidbody;
+    private EnemyAnimator _enemyAnimator;
+    [SerializeField] private AnimatedBarHealthIndicator _healthIndicator;
     private AbyssDetector _abyssDetector;
     private CertainFrequencyPlayerDetector _playerDetector;
     private CertainFrequencyAttacker _certainFrequencyAttacker;
-    private EnemyAnimator _enemyAnimator;
     
     private Patroller _patroller;
     private Chaser _chaser;
@@ -33,16 +35,18 @@ public class Enemy : MonoBehaviour, IDamageable
 
     private void Awake()
     {
-        _abyssDetector = GetComponent<AbyssDetector>();
         _rigidbody = GetComponent<Rigidbody2D>();
+        _enemyAnimator = GetComponent<EnemyAnimator>();
+        _abyssDetector = GetComponent<AbyssDetector>();
         _playerDetector = GetComponent<CertainFrequencyPlayerDetector>();
         _certainFrequencyAttacker = GetComponent<CertainFrequencyAttacker>();
-        _enemyAnimator = GetComponent<EnemyAnimator>();
         
         _patroller = new Patroller(_rigidbody, _speed, _waypoints, _waypointReachRange);
         _chaser = new Chaser(_rigidbody, _speed, _attackRadius);
         _health = new Health();
-        _damageableDetector = new ComponentDetector<IDamageable>(transform, _attackRadius);
+        _damageableDetector = new ComponentDetector<IDamageable>(transform, _attackLayerMask, _attackRadius);
+
+        _healthIndicator.Initialize(_health);
     }
 
     private void OnEnable()
@@ -51,6 +55,7 @@ public class Enemy : MonoBehaviour, IDamageable
         _enemyAnimationEvents.Attacked += OnAnimatorEventsAttacked;
         _damageableDetector.Detected += Attack;
 
+        _health.Changed += OnHealthChanged;
         _health.BecameZero += Die;
         _abyssDetector.Detected += Die;
 
@@ -64,6 +69,7 @@ public class Enemy : MonoBehaviour, IDamageable
         _enemyAnimationEvents.Attacked -= OnAnimatorEventsAttacked;
         _damageableDetector.Detected -= Attack;
 
+        _health.Changed -= OnHealthChanged;
         _health.BecameZero -= Die;
         _abyssDetector.Detected -= Die;
 
@@ -104,8 +110,14 @@ public class Enemy : MonoBehaviour, IDamageable
     public void Attack(IDamageable damageable)
         => damageable.TakeDamage(_damage);
 
+    private void OnHealthChanged()
+        => _healthIndicator.Display();
+
     private void Die()
-        => gameObject.SetActive(false);
+    {
+        gameObject.SetActive(false);
+        _healthIndicator.Hide();
+    }
 
     private void OnAttackerAttacked()
         => _enemyAnimator.Attack();

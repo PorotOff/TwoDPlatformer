@@ -13,13 +13,16 @@ public class Player : MonoBehaviour, ICollectibleVisitor, IDamageable, IAttacker
     [SerializeField] private float _speed;
     [SerializeField] private float _jumpForce = 3f;
     [Header("Attack settings")]
-    [SerializeField] private int _damage;
+    [SerializeField] private LayerMask _attackLayerMask;
     [SerializeField] private float _attackRadius;
+    [SerializeField] private int _damage;
     [Header("Animations settings")]
     [SerializeField] private PlayerAnimationEvents _playerAnimationEvents;
 
+
     private Rigidbody2D _rigidbody;
     private PlayerAnimator _playerAnimator;
+    [SerializeField] private AnimatedBarHealthIndicator _healthIndicator;
     private GroundDetector _groundDetector;
     private CollectibleDetector _collectibleDetector;
     private AbyssDetector _abyssDetector;
@@ -46,7 +49,9 @@ public class Player : MonoBehaviour, ICollectibleVisitor, IDamageable, IAttacker
         _flipper = new Flipper(transform);
         _health = new Health();
         _wallet = new Wallet();
-        _damageableDetector = new ComponentDetector<IDamageable>(transform, _attackRadius);
+        _damageableDetector = new ComponentDetector<IDamageable>(transform, _attackLayerMask, _attackRadius);
+
+        _healthIndicator.Initialize(_health);
     }
 
     private void OnEnable()
@@ -56,6 +61,7 @@ public class Player : MonoBehaviour, ICollectibleVisitor, IDamageable, IAttacker
         _inputService.MovementCanceled += OnInputMovementCanceled;
         _inputService.Attacked += OnInputAttacked;
 
+        _health.Changed += OnHealthChanged;
         _health.BecameZero += OnHealthZero;
 
         _groundDetector.Detected += OnGroundDetected;
@@ -73,6 +79,7 @@ public class Player : MonoBehaviour, ICollectibleVisitor, IDamageable, IAttacker
         _inputService.MovementCanceled -= OnInputMovementCanceled;
         _inputService.Attacked -= OnInputAttacked;
 
+        _health.Changed -= OnHealthChanged;
         _health.BecameZero -= OnHealthZero;
 
         _groundDetector.Detected -= OnGroundDetected;
@@ -93,7 +100,7 @@ public class Player : MonoBehaviour, ICollectibleVisitor, IDamageable, IAttacker
         => _wallet.TakeCoins(collectible.Value);
 
     public void Visit(HealthPotion healthPotion)
-        => _health.Heal(healthPotion.HealthAmount);
+        => _health.TakeHealth(healthPotion.HealthAmount);
 
     public void TakeDamage(int damage)
     {
@@ -103,6 +110,9 @@ public class Player : MonoBehaviour, ICollectibleVisitor, IDamageable, IAttacker
 
     public void Attack(IDamageable damageable)
         => damageable.TakeDamage(_damage);
+
+    private void OnHealthChanged()
+        => _healthIndicator.Display();
 
     private void OnHealthZero()
         => Died?.Invoke();
@@ -138,7 +148,7 @@ public class Player : MonoBehaviour, ICollectibleVisitor, IDamageable, IAttacker
         => collectible.Accept(this);
 
     private void OnAbyssDetected()
-        => _health.Die();
+        => _health.Zeroize();
 
     private void OnPlayerAnimatorEventsAttacked()
         => _damageableDetector.Detect();

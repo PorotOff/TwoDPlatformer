@@ -162,12 +162,13 @@ MonoBehaviour:
   _inputService: {fileID: 0}
   _speed: 6
   _jumpForce: 8
-  _playerAnimationEvents: {fileID: 0}
-  _damage: 30
-  _damageableLayerMask:
+  _attackLayerMask:
     serializedVersion: 2
-    m_Bits: 0
-  _attackRadius: 0
+    m_Bits: 2048
+  _attackRadius: 2
+  _damage: 30
+  _playerAnimationEvents: {fileID: 1276967567409974227}
+  _healthIndicator: {fileID: 0}
 --- !u!114 &6910898999364017254
 MonoBehaviour:
   m_ObjectHideFlags: 0

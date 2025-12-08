@@ -3,38 +3,44 @@ using UnityEngine;
 
 public class Health
 {
-    private int _maxHealth = 100;
+    private int _value;
 
     public Health()
         => Reset();
 
+    public event Action Changed;
     public event Action BecameZero;
 
-    public int HealthValue { get; private set; }
-
-    public void TakeDamage(int damage)
+    public int Max => 100;
+    public int Value
     {
-        if (damage > 0)
-        {
-            HealthValue = Mathf.Max(0, HealthValue - damage);
+        get => _value;
 
-            if (HealthValue == 0)
+        private set
+        {
+            _value = value;
+            Changed?.Invoke();
+
+            if (Value == 0)
                 BecameZero?.Invoke();
         }
     }
 
-    public void Die()
+    public void TakeDamage(int damage)
     {
-        HealthValue = 0;
-        BecameZero?.Invoke();
+        if (damage > 0)
+            Value = Mathf.Max(0, Value - damage);
     }
 
-    public void Heal(int healthAmount)
+    public void Zeroize()
+        => Value = 0;
+
+    public void TakeHealth(int health)
     {
-        if (healthAmount > 0)
-            HealthValue = Mathf.Min(_maxHealth, HealthValue + healthAmount);
+        if (health > 0)
+            Value = Mathf.Min(Max, Value + health);
     }
 
     public void Reset()
-        => HealthValue = _maxHealth;
+        => Value = Max;
 }
