@@ -32,7 +32,7 @@ RectTransform:
   m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_ConstrainProportionsScale: 1
   m_Children:
-  - {fileID: 1598990786750717085}
+  - {fileID: 4641248306520810842}
   m_Father: {fileID: 2325601277703848147}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -239,13 +239,37 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 418663107444172002, guid: 71823b21f6ac496438e7d015e47c26cc, type: 3}
+      propertyPath: m_PixelsPerUnitMultiplier
+      value: 45
+      objectReference: {fileID: 0}
     - target: {fileID: 1753461429221971162, guid: 71823b21f6ac496438e7d015e47c26cc, type: 3}
       propertyPath: m_PixelsPerUnitMultiplier
       value: 45
       objectReference: {fileID: 0}
+    - target: {fileID: 5026032809865171615, guid: 71823b21f6ac496438e7d015e47c26cc, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5026032809865171615, guid: 71823b21f6ac496438e7d015e47c26cc, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5835554741463321443, guid: 71823b21f6ac496438e7d015e47c26cc, type: 3}
       propertyPath: m_Name
       value: AnimatedBarHealthIndicator
+      objectReference: {fileID: 0}
+    - target: {fileID: 6071135776195181335, guid: 71823b21f6ac496438e7d015e47c26cc, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 6071135776195181335, guid: 71823b21f6ac496438e7d015e47c26cc, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 6071135776195181335, guid: 71823b21f6ac496438e7d015e47c26cc, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 77.8
       objectReference: {fileID: 0}
     - target: {fileID: 7644061535664724366, guid: 71823b21f6ac496438e7d015e47c26cc, type: 3}
       propertyPath: m_AnchorMax.x
@@ -260,22 +284,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 71823b21f6ac496438e7d015e47c26cc, type: 3}
---- !u!224 &1598990786750717085 stripped
+--- !u!224 &4641248306520810842 stripped
 RectTransform:
-  m_CorrespondingSourceObject: {fileID: 151089162574824144, guid: 71823b21f6ac496438e7d015e47c26cc, type: 3}
+  m_CorrespondingSourceObject: {fileID: 6071135776195181335, guid: 71823b21f6ac496438e7d015e47c26cc, type: 3}
   m_PrefabInstance: {fileID: 1452419044220673613}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &4704473143797544062 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6152376733902563891, guid: 71823b21f6ac496438e7d015e47c26cc, type: 3}
-  m_PrefabInstance: {fileID: 1452419044220673613}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e32e41d9acd77bb41a60dc4ee19bab7d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &8556309037960779925
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -284,10 +297,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2325601277703848147}
     m_Modifications:
-    - target: {fileID: 857205275266376703, guid: 43862cf91c22b4e409f72eadfe9aa3c4, type: 3}
-      propertyPath: _healthIndicator
-      value: 
-      objectReference: {fileID: 4704473143797544062}
     - target: {fileID: 4876887248404089156, guid: 43862cf91c22b4e409f72eadfe9aa3c4, type: 3}
       propertyPath: m_Name
       value: Player
