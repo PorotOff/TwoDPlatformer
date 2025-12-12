@@ -284,6 +284,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 71823b21f6ac496438e7d015e47c26cc, type: 3}
+--- !u!114 &3436513927115234518 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4294450909811557019, guid: 71823b21f6ac496438e7d015e47c26cc, type: 3}
+  m_PrefabInstance: {fileID: 1452419044220673613}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b0bcc0b0e3e7f34480187f4e3ac55dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &4641248306520810842 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6071135776195181335, guid: 71823b21f6ac496438e7d015e47c26cc, type: 3}
@@ -297,6 +308,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2325601277703848147}
     m_Modifications:
+    - target: {fileID: 857205275266376703, guid: 43862cf91c22b4e409f72eadfe9aa3c4, type: 3}
+      propertyPath: HealthIndicator
+      value: 
+      objectReference: {fileID: 3436513927115234518}
     - target: {fileID: 4876887248404089156, guid: 43862cf91c22b4e409f72eadfe9aa3c4, type: 3}
       propertyPath: m_Name
       value: Player

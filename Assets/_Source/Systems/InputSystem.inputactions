@@ -32,6 +32,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "UsingAbilities",
+                    "type": "Button",
+                    "id": "e224b7a3-80b8-4243-9393-bff648d2b5ca",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -148,11 +157,22 @@
                 {
                     "name": "",
                     "id": "acbf1809-f0dc-4394-a568-cec02ffd102e",
-                    "path": "<Keyboard>/j",
+                    "path": "<Keyboard>/h",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Attack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0ef76849-f316-4c9b-8bf2-e62eded2605f",
+                    "path": "<Keyboard>/z",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "UsingAbilities",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

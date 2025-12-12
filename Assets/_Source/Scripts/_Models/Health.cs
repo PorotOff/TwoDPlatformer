@@ -18,7 +18,7 @@ public class Health
 
         private set
         {
-            _value = value;
+            _value = Mathf.Clamp(value, 0, Max);
             Changed?.Invoke();
 
             if (Value == 0)
@@ -29,7 +29,7 @@ public class Health
     public void TakeDamage(int damage)
     {
         if (damage > 0)
-            Value = Mathf.Max(0, Value - damage);
+            Value -= damage;
     }
 
     public void Zeroize()
@@ -38,7 +38,7 @@ public class Health
     public void TakeHealth(int health)
     {
         if (health > 0)
-            Value = Mathf.Min(Max, Value + health);
+            Value += health;
     }
 
     public void Reset()

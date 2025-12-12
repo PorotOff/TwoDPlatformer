@@ -1515,7 +1515,6 @@ GameObject:
   - component: {fileID: 1390960318169100688}
   - component: {fileID: 1976708538461402736}
   - component: {fileID: 9220374745370475408}
-  - component: {fileID: 6152064459085318111}
   m_Layer: 11
   m_Name: Enemy
   m_TagString: Untagged
@@ -1617,16 +1616,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4ff12bcb8e62404397dec0dfbe2405e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _waypoints: []
-  _waypointReachRange: 0.1
-  _speed: 1
-  _attackLayerMask:
+  Speed: 1
+  HealthIndicator: {fileID: 0}
+  AttackLayerMask:
     serializedVersion: 2
     m_Bits: 1024
-  _attackRadius: 1
-  _damage: 10
+  AttackRadius: 1
+  Damage: 10
+  _waypoints: []
+  _waypointReachRange: 0.1
   _enemyAnimationEvents: {fileID: 8274953953194795370}
-  _healthIndicator: {fileID: 0}
 --- !u!114 &4914271523576095724
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1695,57 +1694,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 519c69406a8331744a7ba8bc8ee58253, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &6152064459085318111
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5052827935315261802}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Navigation:
-    m_Mode: 3
-    m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
-  m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
-    m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
-  m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
-  m_AnimationTriggers:
-    m_NormalTrigger: Normal
-    m_HighlightedTrigger: Highlighted
-    m_PressedTrigger: Pressed
-    m_SelectedTrigger: Selected
-    m_DisabledTrigger: Disabled
-  m_Interactable: 1
-  m_TargetGraphic: {fileID: 0}
-  m_FillRect: {fileID: 0}
-  m_HandleRect: {fileID: 0}
-  m_Direction: 0
-  m_MinValue: 0
-  m_MaxValue: 1
-  m_WholeNumbers: 0
-  m_Value: 0
-  m_OnValueChanged:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1 &5182039171629677977
 GameObject:
   m_ObjectHideFlags: 0

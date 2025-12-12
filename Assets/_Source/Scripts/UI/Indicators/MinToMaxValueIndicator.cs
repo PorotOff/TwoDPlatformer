@@ -4,13 +4,13 @@ public abstract class MinToMaxValueIndicator : MonoBehaviour
 {
     protected float Min;
     protected float Max;
-    protected float Current;
 
-    public void Initialize(float min, float max, float current)
+    public virtual void Initialize(float min, float max, float current)
     {
         Min = min;
         Max = max;
-        Current = current;
+
+        Display(current);
     }
 
     public abstract void Display(float current);

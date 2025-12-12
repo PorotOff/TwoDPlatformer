@@ -1,78 +1,55 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(EnemyAnimator))]
-[RequireComponent(typeof(AbyssDetector))]
 [RequireComponent(typeof(CertainFrequencyPlayerDetector))]
 [RequireComponent(typeof(CertainFrequencyAttacker))]
-public class Enemy : MonoBehaviour, IDamageable
+public class Enemy : Entity
 {
     [Header("Movement settings")]
     [SerializeField] private List<Transform> _waypoints;
     [SerializeField] private float _waypointReachRange = 0.1f;
-    [SerializeField] private float _speed;
-    [Header("Health settings")]
-    [SerializeField] private AnimatedBarMinToMaxValueIndicator _healthIndicator;
-    [Header("Attack settings")]
-    [SerializeField] private LayerMask _attackLayerMask;
-    [SerializeField] private float _attackRadius = 1;
-    [SerializeField] private int _damage;
     [Header("Animations settings")]
     [SerializeField] private EnemyAnimationEvents _enemyAnimationEvents;
-    
-    private Rigidbody2D _rigidbody;
+
     private EnemyAnimator _enemyAnimator;
-    private AbyssDetector _abyssDetector;
     private CertainFrequencyPlayerDetector _playerDetector;
     private CertainFrequencyAttacker _certainFrequencyAttacker;
     
     private Patroller _patroller;
     private Chaser _chaser;
-    private Health _health;
-    private ComponentDetector<IDamageable> _damageableDetector;
     
     private Player _player;
 
-    private void Awake()
+    protected override void Awake()
     {
-        _rigidbody = GetComponent<Rigidbody2D>();
+        base.Awake();
+        
         _enemyAnimator = GetComponent<EnemyAnimator>();
-        _abyssDetector = GetComponent<AbyssDetector>();
         _playerDetector = GetComponent<CertainFrequencyPlayerDetector>();
         _certainFrequencyAttacker = GetComponent<CertainFrequencyAttacker>();
         
-        _patroller = new Patroller(_rigidbody, _speed, _waypoints, _waypointReachRange);
-        _chaser = new Chaser(_rigidbody, _speed, _attackRadius);
-        _health = new Health();
-        _damageableDetector = new ComponentDetector<IDamageable>(transform, _attackLayerMask, _attackRadius);
-
-        _healthIndicator.Initialize(0, _health.Max, _health.Value);
+        _patroller = new Patroller(Rigidbody, Speed, _waypoints, _waypointReachRange);
+        _chaser = new Chaser(Rigidbody, Speed, AttackRadius);
     }
 
-    private void OnEnable()
+    protected override void OnEnable()
     {
-        _certainFrequencyAttacker.Attacked += OnAttackerAttacked;
-        _enemyAnimationEvents.Attacked += OnAnimatorEventsAttacked;
-        _damageableDetector.Detected += Attack;
+        base.OnEnable();
 
-        _health.Changed += OnHealthChanged;
-        _health.BecameZero += Die;
-        _abyssDetector.Detected += Die;
+        _certainFrequencyAttacker.Attacked += OnAttackerAttacked;
+        _enemyAnimationEvents.Attacked += DetectDamageable;
 
         _playerDetector.PlayerDetected += OnPlayerDetected;
         _playerDetector.PlayerNotDetected += OnPlayerNotDetected;
     }
 
-    private void OnDisable()
+    protected override void OnDisable()
     {
-        _certainFrequencyAttacker.Attacked -= OnAttackerAttacked;
-        _enemyAnimationEvents.Attacked -= OnAnimatorEventsAttacked;
-        _damageableDetector.Detected -= Attack;
+        base.OnDisable();
 
-        _health.Changed -= OnHealthChanged;
-        _health.BecameZero -= Die;
-        _abyssDetector.Detected -= Die;
+        _certainFrequencyAttacker.Attacked -= OnAttackerAttacked;
+        _enemyAnimationEvents.Attacked -= DetectDamageable;
 
         _playerDetector.PlayerDetected -= OnPlayerDetected;
         _playerDetector.PlayerNotDetected -= OnPlayerNotDetected;
@@ -102,29 +79,14 @@ public class Enemy : MonoBehaviour, IDamageable
         }
     }
 
-    public void TakeDamage(int damage)
+    public override void TakeDamage(int damage)
     {
-        _health.TakeDamage(damage);
+        base.TakeDamage(damage);
         _enemyAnimator.TakeDamage();
-    }
-
-    public void Attack(IDamageable damageable)
-        => damageable.TakeDamage(_damage);
-
-    private void OnHealthChanged()
-        => _healthIndicator.Display(_health.Value);
-
-    private void Die()
-    {
-        gameObject.SetActive(false);
-        _healthIndicator.SetActive(false);
     }
 
     private void OnAttackerAttacked()
         => _enemyAnimator.Attack();
-
-    private void OnAnimatorEventsAttacked()
-        => _damageableDetector.Detect();
 
     private void OnPlayerDetected(Player player)
         => _player = player;

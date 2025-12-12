@@ -1,121 +1,104 @@
-using System;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(PlayerAnimator))]
 [RequireComponent(typeof(GroundDetector))]
 [RequireComponent(typeof(CollectibleDetector))]
-[RequireComponent(typeof(AbyssDetector))]
-public class Player : MonoBehaviour, ICollectibleVisitor, IDamageable, IAttacker
+[RequireComponent(typeof(VampirismAbility))]
+public class Player : Entity, ICollectibleVisitor
 {
     [Header("Movement settings")]
     [SerializeField] private InputService _inputService;
-    [SerializeField] private float _speed;
     [SerializeField] private float _jumpForce = 3f;
-    [Header("Health settings")]
-    [SerializeField] private AnimatedBarMinToMaxValueIndicator _healthIndicator;
-    [Header("Attack settings")]
-    [SerializeField] private LayerMask _attackLayerMask;
-    [SerializeField] private float _attackRadius;
-    [SerializeField] private int _damage;
     [Header("Animations settings")]
     [SerializeField] private PlayerAnimationEvents _playerAnimationEvents;
 
-    private Rigidbody2D _rigidbody;
     private PlayerAnimator _playerAnimator;
     private GroundDetector _groundDetector;
     private CollectibleDetector _collectibleDetector;
-    private AbyssDetector _abyssDetector;
+    private VampirismAbility _vampirismAbility;
 
     private Mover _mover;
     private Jumper _jumper;
     private Flipper _flipper;
-    private Health _health;
     private Wallet _wallet;
-    private ComponentDetector<IDamageable> _damageableDetector;
 
-    public event Action Died;
-
-    private void Awake()
+    protected override void Awake()
     {
-        _rigidbody = GetComponent<Rigidbody2D>();
+        base.Awake();
+
         _playerAnimator = GetComponent<PlayerAnimator>();
         _groundDetector = GetComponent<GroundDetector>();
         _collectibleDetector = GetComponent<CollectibleDetector>();
-        _abyssDetector = GetComponent<AbyssDetector>();
+        _vampirismAbility = GetComponent<VampirismAbility>();
         
-        _mover = new Mover(_rigidbody, _speed);
-        _jumper = new Jumper(_rigidbody, _jumpForce);
+        _mover = new Mover(Rigidbody, Speed);
+        _jumper = new Jumper(Rigidbody, _jumpForce);
         _flipper = new Flipper(transform);
-        _health = new Health();
         _wallet = new Wallet();
-        _damageableDetector = new ComponentDetector<IDamageable>(transform, _attackLayerMask, _attackRadius);
 
-        _healthIndicator.Initialize(0, _health.Max, _health.Value);
+        _vampirismAbility.Initialize(this);
     }
 
-    private void OnEnable()
+    protected override void OnEnable()
     {
+        base.OnEnable();
+
         _inputService.Jumped += OnInputJumped;
         _inputService.MovementStarted += OnInputMovementStarted;
         _inputService.MovementCanceled += OnInputMovementCanceled;
-        _inputService.Attacked += OnInputAttacked;
 
-        _health.Changed += OnHealthChanged;
-        _health.BecameZero += OnHealthZero;
+        _inputService.Attacked += OnInputAttacked;
+        _inputService.UsedAbility += OnInputUsedAbility;
 
         _groundDetector.Detected += OnGroundDetected;
         _collectibleDetector.Detected += OnCollectibleDetected;
-        _abyssDetector.Detected += OnAbyssDetected;
 
-        _playerAnimationEvents.Attacked += OnPlayerAnimatorEventsAttacked;
-        _damageableDetector.Detected += Attack;
+        _playerAnimationEvents.Attacked += DetectDamageable;
     }
 
-    private void OnDisable()
+    protected override void OnDisable()
     {
+        base.OnDisable();
+
         _inputService.Jumped -= OnInputJumped;
         _inputService.MovementStarted -= OnInputMovementStarted;
         _inputService.MovementCanceled -= OnInputMovementCanceled;
-        _inputService.Attacked -= OnInputAttacked;
 
-        _health.Changed -= OnHealthChanged;
-        _health.BecameZero -= OnHealthZero;
+        _inputService.Attacked -= OnInputAttacked;
+        _inputService.UsedAbility -= OnInputUsedAbility;
 
         _groundDetector.Detected -= OnGroundDetected;
         _collectibleDetector.Detected -= OnCollectibleDetected;
-        _abyssDetector.Detected -= OnAbyssDetected;
 
-        _playerAnimationEvents.Attacked -= OnPlayerAnimatorEventsAttacked;
-        _damageableDetector.Detected -= Attack;
+        _playerAnimationEvents.Attacked -= DetectDamageable;
     }
 
     private void FixedUpdate()
         => _mover.Move(_inputService.HorizontalAxesValue.x);
 
-    public void Reset()
-        => _health.Reset();
+    public override void Reset()
+    {
+        base.Reset();
+        _vampirismAbility.DeactivateAbility();
+    }
 
     public void Visit(Coin collectible)
         => _wallet.TakeCoins(collectible.Value);
 
     public void Visit(HealthPotion healthPotion)
-        => _health.TakeHealth(healthPotion.HealthAmount);
+        => TakeHealth(healthPotion.HealthAmount);
 
-    public void TakeDamage(int damage)
+    public override void TakeDamage(int damage)
     {
-        _health.TakeDamage(damage);
+        base.TakeDamage(damage);
         _playerAnimator.TakeDamage();
     }
 
-    public void Attack(IDamageable damageable)
-        => damageable.TakeDamage(_damage);
-
-    private void OnHealthChanged()
-        => _healthIndicator.Display(_health.Value);
-
-    private void OnHealthZero()
-        => Died?.Invoke();
+    protected override void OnHealthZero()
+    {
+        _playerAnimator.Idle(true);
+        base.OnHealthZero();
+    }
 
     private void OnInputMovementStarted()
     {
@@ -129,6 +112,9 @@ public class Player : MonoBehaviour, ICollectibleVisitor, IDamageable, IAttacker
     private void OnInputAttacked()
         => _playerAnimator.Attack();
 
+    private void OnInputUsedAbility()
+        => _vampirismAbility.ActivateAbility();
+
     private void OnInputJumped()
     {
         if (_jumper.CanJump)
@@ -141,15 +127,12 @@ public class Player : MonoBehaviour, ICollectibleVisitor, IDamageable, IAttacker
     private void OnGroundDetected(bool isGrounded)
     {
         _jumper.OnGrounded(isGrounded);
-        _playerAnimator.OnGrounded(isGrounded);
+        _playerAnimator.Idle(isGrounded);
     }
 
     private void OnCollectibleDetected(ICollectible collectible)
         => collectible.Accept(this);
 
-    private void OnAbyssDetected()
-        => _health.Zeroize();
-
-    private void OnPlayerAnimatorEventsAttacked()
-        => _damageableDetector.Detect();
+    // TO-DO: Исправить баг с аниматором при респауне игрока.
+    // TO-DO: Исправить баг с индикатором и полем способности, чтобы после смерти они нормально восстанавливались.
 }

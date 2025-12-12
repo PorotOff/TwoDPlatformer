@@ -118,6 +118,15 @@ public partial class @InputSystem: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""UsingAbilities"",
+                    ""type"": ""Button"",
+                    ""id"": ""e224b7a3-80b8-4243-9393-bff648d2b5ca"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -234,11 +243,22 @@ public partial class @InputSystem: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""acbf1809-f0dc-4394-a568-cec02ffd102e"",
-                    ""path"": ""<Keyboard>/j"",
+                    ""path"": ""<Keyboard>/h"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0ef76849-f316-4c9b-8bf2-e62eded2605f"",
+                    ""path"": ""<Keyboard>/z"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UsingAbilities"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -252,6 +272,7 @@ public partial class @InputSystem: IInputActionCollection2, IDisposable
         m_Game_Movement = m_Game.FindAction("Movement", throwIfNotFound: true);
         m_Game_Jump = m_Game.FindAction("Jump", throwIfNotFound: true);
         m_Game_Attack = m_Game.FindAction("Attack", throwIfNotFound: true);
+        m_Game_UsingAbilities = m_Game.FindAction("UsingAbilities", throwIfNotFound: true);
     }
 
     ~@InputSystem()
@@ -335,6 +356,7 @@ public partial class @InputSystem: IInputActionCollection2, IDisposable
     private readonly InputAction m_Game_Movement;
     private readonly InputAction m_Game_Jump;
     private readonly InputAction m_Game_Attack;
+    private readonly InputAction m_Game_UsingAbilities;
     /// <summary>
     /// Provides access to input actions defined in input action map "Game".
     /// </summary>
@@ -358,6 +380,10 @@ public partial class @InputSystem: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Game/Attack".
         /// </summary>
         public InputAction @Attack => m_Wrapper.m_Game_Attack;
+        /// <summary>
+        /// Provides access to the underlying input action "Game/UsingAbilities".
+        /// </summary>
+        public InputAction @UsingAbilities => m_Wrapper.m_Game_UsingAbilities;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -393,6 +419,9 @@ public partial class @InputSystem: IInputActionCollection2, IDisposable
             @Attack.started += instance.OnAttack;
             @Attack.performed += instance.OnAttack;
             @Attack.canceled += instance.OnAttack;
+            @UsingAbilities.started += instance.OnUsingAbilities;
+            @UsingAbilities.performed += instance.OnUsingAbilities;
+            @UsingAbilities.canceled += instance.OnUsingAbilities;
         }
 
         /// <summary>
@@ -413,6 +442,9 @@ public partial class @InputSystem: IInputActionCollection2, IDisposable
             @Attack.started -= instance.OnAttack;
             @Attack.performed -= instance.OnAttack;
             @Attack.canceled -= instance.OnAttack;
+            @UsingAbilities.started -= instance.OnUsingAbilities;
+            @UsingAbilities.performed -= instance.OnUsingAbilities;
+            @UsingAbilities.canceled -= instance.OnUsingAbilities;
         }
 
         /// <summary>
@@ -474,5 +506,12 @@ public partial class @InputSystem: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnAttack(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "UsingAbilities" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnUsingAbilities(InputAction.CallbackContext context);
     }
 }

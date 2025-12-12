@@ -12,14 +12,14 @@ public class AnimatedBarMinToMaxValueIndicator : BarMinToMaxValueIndicator
         if (_coroutine != null)
             StopCoroutine(_coroutine);
 
-        _coroutine = StartCoroutine(UpdateHealth());
+        _coroutine = StartCoroutine(UpdateHealth(current));
     }
 
-    private IEnumerator UpdateHealth()
+    private IEnumerator UpdateHealth(float current)
     {
-        while (Slider.value != Current)
+        while (Slider.value != current)
         {
-            Slider.value = Mathf.Lerp(Slider.value, Current, _interpolationStep);
+            Slider.value = Mathf.Lerp(Slider.value, current, _interpolationStep);
             yield return null;
         }
     }

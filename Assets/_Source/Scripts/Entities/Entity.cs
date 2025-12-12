@@ -2,81 +2,87 @@ using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
-[RequireComponent(typeof(GroundDetector))]
 [RequireComponent(typeof(AbyssDetector))]
 public abstract class Entity : MonoBehaviour, IDamageable, IHealable, IAttacker
 {
     [Header("Movement settings")]
-    [SerializeField] private float _speed;
+    [SerializeField] protected float Speed;
     [Header("Health settings")]
-    [SerializeField] private AnimatedBarMinToMaxValueIndicator _healthIndicator;
+    [SerializeField] protected AnimatedBarMinToMaxValueIndicator HealthIndicator;
     [Header("Attack settings")]
-    [SerializeField] private LayerMask _attackLayerMask;
-    [SerializeField] private float _attackRadius;
-    [SerializeField] private int _damage;
+    [SerializeField] protected LayerMask AttackLayerMask;
+    [SerializeField] protected float AttackRadius;
+    [SerializeField] protected int Damage;
 
-    private Rigidbody2D _rigidbody;
-    private GroundDetector _groundDetector;
-    private AbyssDetector _abyssDetector;
+    protected Rigidbody2D Rigidbody;
+    protected AbyssDetector AbyssDetector;
 
-    private Mover _mover;
-    private Flipper _flipper;
-    private Health _health;
-    private ComponentDetector<IDamageable> _damageableDetector;
+    protected Health Health;
+    protected ComponentDetector<IDamageable> DamageableDetector;
 
     public event Action Died;
 
-    private void Awake()
+    protected virtual void Awake()
     {
-        _rigidbody = GetComponent<Rigidbody2D>();
-        _groundDetector = GetComponent<GroundDetector>();
-        _abyssDetector = GetComponent<AbyssDetector>();
-        
-        _mover = new Mover(_rigidbody, _speed);
-        _flipper = new Flipper(transform);
-        _health = new Health();
-        _damageableDetector = new ComponentDetector<IDamageable>(transform, _attackLayerMask, _attackRadius);
+        Rigidbody = GetComponent<Rigidbody2D>();
+        AbyssDetector = GetComponent<AbyssDetector>();
 
-        _healthIndicator.Initialize(0, _health.Max, _health.Value);
+        Health = new Health();
+
+        float offset = AttackRadius / 2f;
+        Vector2 offsetDirection = transform.forward;
+        DamageableDetector = new ComponentDetector<IDamageable>(transform, AttackLayerMask, AttackRadius, offset, offsetDirection);
+
+        HealthIndicator.Initialize(0, Health.Max, Health.Value);
     }
 
-    private void OnEnable()
+    protected virtual void OnEnable()
     {
-        _health.Changed += OnHealthChanged;
-        _health.BecameZero += OnHealthZero;
+        Health.Changed += OnHealthChanged;
+        Health.BecameZero += OnHealthZero;
 
-        _groundDetector.Detected += OnGroundDetected;
-        _abyssDetector.Detected += OnAbyssDetected;        
-        _damageableDetector.Detected += Attack;
+        AbyssDetector.Detected += OnAbyssDetected;
+        DamageableDetector.Detected += Attack;
     }
 
-    private void OnDisable()
+    protected virtual void OnDisable()
     {
-        _health.Changed -= OnHealthChanged;
-        _health.BecameZero -= OnHealthZero;
+        Health.Changed -= OnHealthChanged;
+        Health.BecameZero -= OnHealthZero;
 
-        _groundDetector.Detected -= OnGroundDetected;
-        _abyssDetector.Detected -= OnAbyssDetected;
-        _damageableDetector.Detected -= Attack;
+        AbyssDetector.Detected -= OnAbyssDetected;
+        DamageableDetector.Detected -= Attack;
     }
 
     public virtual void TakeDamage(int damage)
-        => _health.TakeDamage(damage);
+        => Health.TakeDamage(damage);
 
     public void TakeHealth(int health)
-        => _health.TakeHealth(health);
+        => Health.TakeHealth(health);
 
     public void Attack(IDamageable damageable)
-        => damageable.TakeDamage(_damage);
+        => damageable.TakeDamage(Damage);
 
-    protected abstract void OnGroundDetected(bool isGrounded);
+    public virtual void Reset()
+    {
+        HealthIndicator.SetActive(true);
+        Health.Reset();
+    }
+
+    protected void DetectDamageable()
+        => DamageableDetector.Detect();
+
+    protected virtual void OnHealthZero()
+    {
+        gameObject.SetActive(false);
+        HealthIndicator.SetActive(false);
+
+        Died?.Invoke();
+    }
 
     private void OnHealthChanged()
-        => _healthIndicator.Display(_health.Value);
-
-    private void OnHealthZero()
-        => Died?.Invoke();
+        => HealthIndicator.Initialize(0, Health.Max, Health.Value);
 
     private void OnAbyssDetected()
-        => _health.Zeroize();
+        => Health.Zeroize();
 }

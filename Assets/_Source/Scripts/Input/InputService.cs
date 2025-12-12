@@ -9,7 +9,9 @@ public class InputService : MonoBehaviour
     public event Action Jumped;
     public event Action MovementStarted;
     public event Action MovementCanceled;
+
     public event Action Attacked;
+    public event Action UsedAbility;
 
     public Vector2 HorizontalAxesValue => _inputSystem.Game.Movement.ReadValue<Vector2>();
 
@@ -24,7 +26,9 @@ public class InputService : MonoBehaviour
         _inputSystem.Game.Jump.performed += OnJumpPerformed;
         _inputSystem.Game.Movement.started += OnMovementStarted;
         _inputSystem.Game.Movement.canceled += OnMovementCanceled;
+
         _inputSystem.Game.Attack.performed += OnAttackPerformed;
+        _inputSystem.Game.UsingAbilities.performed += OnUsedAbility;
     }
 
     private void OnDisable()
@@ -32,7 +36,9 @@ public class InputService : MonoBehaviour
         _inputSystem.Game.Jump.performed -= OnJumpPerformed;
         _inputSystem.Game.Movement.started -= OnMovementStarted;
         _inputSystem.Game.Movement.canceled -= OnMovementCanceled;
+
         _inputSystem.Game.Attack.performed -= OnAttackPerformed;
+        _inputSystem.Game.UsingAbilities.performed -= OnUsedAbility;
     }
 
     private void OnJumpPerformed(InputAction.CallbackContext context)
@@ -46,4 +52,7 @@ public class InputService : MonoBehaviour
 
     private void OnAttackPerformed(InputAction.CallbackContext context)
         => Attacked?.Invoke();
+
+    private void OnUsedAbility(InputAction.CallbackContext context)
+        => UsedAbility?.Invoke();
 }

@@ -1,39 +1,39 @@
 using UnityEngine;
 
-public class PlayerAnimator : MonoBehaviour
+public class PlayerAnimator : EntityAnimator
 {
-    [SerializeField] private Animator _animator;
-
-    private readonly int IsIdle = Animator.StringToHash(nameof(IsIdle));
     private readonly int IsMove = Animator.StringToHash(nameof(IsMove));
+    private readonly int IsIdle = Animator.StringToHash(nameof(IsIdle));
+    private readonly int Idled = Animator.StringToHash(nameof(Idled));
     private readonly int Jumped = Animator.StringToHash(nameof(Jumped));
     private readonly int Attacked = Animator.StringToHash(nameof(Attacked));
     private readonly int Damaged = Animator.StringToHash(nameof(Damaged));
-    private readonly int Died = Animator.StringToHash(nameof(Died));
 
     public void StartMovement()
-        => _animator.SetBool(IsMove, true);
+        => Animator.SetBool(IsMove, true);
 
     public void StopMovement()
-        => _animator.SetBool(IsMove, false);
+        => Animator.SetBool(IsMove, false);
 
     public void Jump()
-        => _animator.SetTrigger(Jumped);
+        => Animator.SetTrigger(Jumped);
 
-    public void OnGrounded(bool isGrounded)
+    public void Idle(bool isGrounded)
     {
         if (isGrounded)
-            _animator.SetBool(IsIdle, true);
+        {
+            Animator.SetTrigger(Idled);
+            Animator.SetBool(IsIdle, true);
+        }
         else
-            _animator.SetBool(IsIdle, false);
+        {
+            Animator.SetBool(IsIdle, false);
+        }
     }
 
     public void Attack()
-        => _animator.SetTrigger(Attacked);
+        => Animator.SetTrigger(Attacked);
 
     public void TakeDamage()
-        => _animator.SetTrigger(Damaged);
-
-    public void Die()
-        => _animator.SetTrigger(Died);
+        => Animator.SetTrigger(Damaged);
 }
